@@ -41,22 +41,23 @@
             this.abrirArchivoToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(800, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(800, 30);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
             // abrirArchivoToolStripMenuItem
             // 
             this.abrirArchivoToolStripMenuItem.Name = "abrirArchivoToolStripMenuItem";
-            this.abrirArchivoToolStripMenuItem.Size = new System.Drawing.Size(108, 24);
+            this.abrirArchivoToolStripMenuItem.Size = new System.Drawing.Size(108, 26);
             this.abrirArchivoToolStripMenuItem.Text = "Abrir archivo";
             this.abrirArchivoToolStripMenuItem.Click += new System.EventHandler(this.abrirArchivoToolStripMenuItem_Click);
             // 
             // treeView1
             // 
-            this.treeView1.Location = new System.Drawing.Point(33, 72);
+            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView1.Location = new System.Drawing.Point(0, 30);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(253, 259);
+            this.treeView1.Size = new System.Drawing.Size(800, 420);
             this.treeView1.TabIndex = 1;
             // 
             // Form1
