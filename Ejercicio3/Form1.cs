@@ -25,9 +25,14 @@ namespace Ejercicio3
             od.Filter = "Archivos de texto|*txt";
             DialogResult res = od.ShowDialog();
 
-            String contenido = File.ReadAllText(od.FileName);
-            LeerArchivo(od.FileName);
-             
+            if (res == DialogResult.OK)
+            {
+                // Limpiar nodos existentes en el TreeView
+                treeView1.Nodes.Clear();
+
+                String contenido = File.ReadAllText(od.FileName);
+                LeerArchivo(od.FileName);
+            }
         }
 
         private void LeerArchivo(String ruta)
@@ -37,36 +42,47 @@ namespace Ejercicio3
                 using (StreamReader sr = new StreamReader(ruta))
                 {
                     String linea;
+                    TreeNode nodoPadre = null;
+
                     while ((linea = sr.ReadLine()) != null)
                     {
-
-                        if (linea.Contains("\t"))
+                        if (!string.IsNullOrWhiteSpace(linea))
                         {
-                            // Dividir la línea en partes utilizando el carácter de tabulación como delimitador
-                            string[] partes = linea.Split('\t');
-
-                            // Obtener el nodo padre actual (último nodo agregado o el nodo raíz si no hay nodos)
-                            TreeNode nodoPadre = treeView1.Nodes.Count > 0 ? treeView1.Nodes[treeView1.Nodes.Count - 1] : null;
-
-                            // Agregar un nuevo nodo hijo para cada parte
-                            foreach (string parte in partes)
+                            // Contar la cantidad de tabulaciones al principio de la línea
+                            int nivel = 0;
+                            while (nivel < linea.Length && linea[nivel] == '\t')
                             {
-                                // Crear un nuevo nodo hijo
-                                TreeNode nodoHijo = new TreeNode(parte);
-
-                                // Agregar el nuevo nodo hijo al nodo padre
-                                if (nodoPadre != null)
-                                    nodoPadre.Nodes.Add(nodoHijo);
-                                else
-                                    // Si no hay nodo padre, agregar al árbol directamente
-                                    treeView1.Nodes.Add(nodoHijo);
-                                // Actualizar el nodo padre para el próximo ciclo
-                                nodoPadre = nodoHijo;
+                                nivel++;
                             }
+
+                            // Crear un nuevo nodo con el contenido de la línea sin tabulaciones
+                            string contenido = linea.Substring(nivel).Trim();
+                            TreeNode nuevoNodo = new TreeNode(contenido);
+
+                            if (nivel == 0)
+                            {
+                                // Si no hay tabulaciones, agregar el nodo directamente al árbol
+                                treeView1.Nodes.Add(nuevoNodo);
+                                nodoPadre = nuevoNodo; // Actualizar el nodo padre
+                            }
+                            else
+                            {
+                                // Si hay tabulaciones, agregar el nodo como hijo del nodo padre adecuado
+                                if (nodoPadre != null)
+                                {
+                                    // Asegurarse de que el nodoPadre tenga el nivel correcto antes de agregar el nodo hijo
+                                    while (nivel <= ObtenerNivel(nodoPadre))
+                                    {
+                                        nodoPadre = nodoPadre.Parent;
+                                    }
+
+                                    nodoPadre.Nodes.Add(nuevoNodo);
+                                }
+                            }
+
+                            // Actualizar el nodo padre para el próximo ciclo
+                            nodoPadre = nuevoNodo;
                         }
-                        else
-                            // Si no hay tabulación, agregar la línea directamente como un nuevo nodo
-                            treeView1.Nodes.Add(linea);
                     }
                 }
             }
@@ -74,6 +90,18 @@ namespace Ejercicio3
             {
                 MessageBox.Show($"Error papi");
             }
+        }
+        
+        // Método para obtener el nivel de un nodo en el árbol
+        private int ObtenerNivel(TreeNode nodo)
+        {
+            int nivel = 0;
+            while (nodo.Parent != null)
+            {
+                nivel++;
+                nodo = nodo.Parent;
+            }
+            return nivel;
         }
     }
 }
